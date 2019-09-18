@@ -1,0 +1,102 @@
+kind:  Role 
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mongodb-tools-operator
+  namespace: mongodb
+rules:
+  - apiGroups: [zalando.org]
+    resources: [kopfpeerings]
+    verbs: [list, watch, patch, get]
+  - apiGroups: [events.k8s.io]
+    resources: [events]
+    verbs: [create]
+  - apiGroups: [""]
+    resources: [events]
+    verbs: [create]
+  - apiGroups:
+    - "apiextensions.k8s.io"
+    resources:
+    - customresourcedefinitions
+    verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+    - watch
+  - apiGroups:
+    - ""
+    resources:
+    - configmaps
+    - secrets
+    - services
+    - pods
+    verbs:
+    - get
+    - list
+    - create
+    - update
+    - delete
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - statefulsets
+    verbs:
+    - create
+    - get
+    - list
+    - watch
+    - delete
+    - update
+  - apiGroups:
+    - mongodb.com
+    resources:
+    - mongodb
+    - mongodbcharts 
+    - mongodbcharts/finalizers
+    verbs:
+    - get
+    - list
+    - watch
+    - delete
+    - update
+---
+kind:  RoleBinding 
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: mongodb-tools-operator
+  namespace: mongodb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind:  Role 
+  name: mongodb-tools-operator
+subjects:
+- kind: ServiceAccount
+  name: mongodb-tools-operator
+  namespace: mongodb
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb-tools-operator
+  namespace: mongodb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-tools-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      application: mongodb-tools-operator
+  template:
+    metadata:
+      labels:
+        application: mongodb-tools-operator
+    spec:
+      serviceAccountName: mongodb-tools-operator
+      containers:
+      - name: mongodb-tools-operator
+        image: jmimick/mongodb-tools-operator
