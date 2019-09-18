@@ -9,13 +9,13 @@ stringData:
   email: admin@example.com
   password: password
 ---
-apiVersion: mongodb.com/v1
+apiVersion: mongodb.com/v1alpha1
 kind: MongoDBCharts
 metadata:
   name: mongodb-charts
 spec:
   useradmin: mongodb-charts-admin
-  version: 
+  version: 19.09
   
 
 

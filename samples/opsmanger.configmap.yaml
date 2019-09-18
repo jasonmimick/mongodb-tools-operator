@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-opsmanager-charts
+data:
+  projectName: Charts_DemoJason
+  orgId: 5b30f7d7d383ad6499f230b1
+  baseUrl: https://cloud.mongodb.com
+
+  credentials: secret-opsmanager-credentials
+  # kubectl  create secret generic secret-opsmanager-credentials --from-literal="user=XQOMRCSU" --from-literal="publicApiKey=e939e0ad-068f-4749-be95-fcac79a9a1e5"

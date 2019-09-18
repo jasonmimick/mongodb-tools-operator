@@ -1,0 +1,15 @@
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: mongodb-charts-{{ name }}-metadb
+  labels:
+    mongodbTool: mongodb-charts-{{ name }}
+spec:
+  type: Standalone
+  version: 4.2.0
+  project: configmap-opsmanager-charts
+  # TODO: credentials: newmongouser@amce123.com => automagic account
+  credentials: secret-opsmanager-credentials
+  persistent: true
+

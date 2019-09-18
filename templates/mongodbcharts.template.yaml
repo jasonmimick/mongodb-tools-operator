@@ -1,23 +1,24 @@
----
-apiVersion: mongodb.com/v1
-kind: MongoDB
-metadata:
-  name: mongodb-charts-{{ name }}-metadb
-  #name: {{ tool-name }}-{{ name }}-metadb
-  labels:
-    mongodbTool: mongodb-charts-{{ name }}
-spec:
-  type: Standalone
-  version: 4.2.0
-  project: configmap-opsmanager-charts
-  # TODO: credentials: newmongouser@amce123.com => automagic account
-  credentials: secret-opsmanager-credentials
-  persistent: true
+#---
+#apiVersion: mongodb.com/v1
+#kind: MongoDB
+#metadata:
+#  name: mongodb-charts-{{ name }}-metadb
+#  namespace: {{ namespace }}
+#  labels:
+#    deploy: mongodb-charts-{{ name }}
+#spec:
+#  type: Standalone
+#  version: 4.2.0
+#  project: configmap-opsmanager-charts
+#  # TODO: credentials: newmongouser@amce123.com => automagic account
+#  credentials: secret-opsmanager-credentials
+#  persistent: true
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: mongodb-charts-{{ name }}-metadb-secret
+  namespace: {{ namespace }}
   labels:
     mongodbTool: mongodb-charts-{{ name }}
 type: Opaque
@@ -28,16 +29,16 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: '{{ name }}' 
-  labels:
-    mongodbTool: mongodb-charts-{{ name }}
+  namespace: {{ namespace }}
 spec:
   replicas: 1
   selector:
-    mongodbTool: mongodb-charts-{{ name }}
+    matchLabels:
+      deploy: mongodb-charts-{{ name }}
   template:
     metadata:
       labels:
-        mongodbTool: mongodb-charts-{{ name }}
+        deploy: mongodb-charts-{{ name }}
     spec:
       containers:
         - name: mongodb-charts-{{ name }}
@@ -50,7 +51,7 @@ spec:
             - name: CHARTS_MONGODB_URI
               valueFrom:
                 secretKeyRef:
-                  name: mongodb-charts-{{ name }}-secret
+                  name: mongodb-charts-{{ name }}-metadb-secret
                   key: mongodb-uri
           volumeMounts:
             - mountPath: "/mongodb-charts/volumes/keys"
@@ -74,8 +75,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mongodb-charts-{{ name }}-pvc
+  namespace: {{ namespace }}
   labels:
-    mongodbTool: mongodb-charts-{{ name }}
+    deploy: mongodb-charts-{{ name }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -87,8 +89,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mongodb-charts-{{ name }}-svc
+  namespace: {{ namespace }}
   labels:
-    mongodbTool: mongodb-charts-{{ name }}
+    deploy: mongodb-charts-{{ name }}
 spec:
   selector:
     mongodbTool: mongodb-charts-{{ name }}

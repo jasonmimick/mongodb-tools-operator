@@ -5,4 +5,7 @@ RUN pip install -r ./requirements.txt
 FROM base-env as mongodb-kubemgr
 COPY operator.py /operator.py
 COPY simple-operator.py /simple-operator.py
-CMD kopf run /simple-operator.py
+COPY pkg /pkg
+COPY crds /crds
+COPY templates /templates
+CMD kopf run --standalone --namespace mongodb /simple-operator.py
