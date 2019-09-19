@@ -50,7 +50,7 @@ Create a similar file and apply it to your cluster.
 ```bash
 kubectl apply -f my-mongodb-charts.yaml
 ```
-For testing you can to your new charts instance using `kubectl`
+For testing you can connect to your new charts instance using `kubectl`
 
 bash
 ```
