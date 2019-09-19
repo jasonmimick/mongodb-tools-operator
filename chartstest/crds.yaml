@@ -1,0 +1,311 @@
+---
+# Source: mongodb-enterprise-operator/templates/crds.yaml
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: mongodb.mongodb.com
+spec:
+  group: mongodb.com
+  version: v1
+  scope: Namespaced
+  names:
+    kind: MongoDB
+    plural: mongodb
+    shortNames:
+    - mdb
+    singular: mongodb
+  additionalPrinterColumns:
+    - name: Type
+      type: string
+      description: "The type of MongoDB deployment. One of 'ReplicaSet', 'ShardedCluster' and 'Standalone'."
+      JSONPath: .spec.type
+    - name: State
+      type: string
+      description: The current state of the MongoDB deployment.
+      JSONPath: .status.phase
+    - name: Version
+      type: string
+      description: The version of MongoDB.
+      JSONPath: .spec.version
+    - name: Age
+      type: date
+      description: The time since the MongoDB resource was created.
+      JSONPath: .metadata.creationTimestamp
+  validation: # there are 3 possible schemas, ReplicaSet, ShardedCluster and Standalone
+    openAPIV3Schema:
+      oneOf:
+      - properties: # Standalone schema
+          spec:
+            properties:
+              credentials:
+                type: string
+              project:
+                type: string
+              version:
+                type: string
+                pattern: "^[0-9]+.[0-9]+.[0-9]+(-.+)?$"
+              logLevel:
+                type: string
+                enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+              type:
+                type: string
+                pattern: "^Standalone$"
+              security:
+                type: object
+                properties:
+                  tls:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                      ca:
+                        type: string
+              additionalMongodConfig:
+                properties:
+                  net:
+                    properties:
+                      ssl:
+                        properties:
+                          mode:
+                            type: string
+                            enum: ["disabled", "allowSSL", "preferSSL", "requireSSL", "allowTLS", "preferTLS", "requireTLS"]
+              exposedExternally:
+                type: boolean
+            required:
+            - credentials
+            - project
+            - version
+            - type
+      - properties: # ReplicaSet schema
+          spec:
+            properties:
+              members:
+                maximum: 50
+                minimum: 1
+                type: integer
+              credentials:
+                type: string
+              project:
+                type: string
+              version:
+                type: string
+                pattern: "^[0-9]+.[0-9]+.[0-9]+(-.+)?$"
+              logLevel:
+                type: string
+                enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+              type:
+                type: string
+                pattern: "^ReplicaSet$"
+              security:
+                type: object
+                properties:
+                  tls:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                      ca:
+                        type: string
+                  clusterAuthenticationMode:
+                    type: string
+                    enum: ["x509"]
+              additionalMongodConfig:
+                properties:
+                  net:
+                    properties:
+                      ssl:
+                        properties:
+                          mode:
+                            type: string
+                            enum: ["disabled", "allowSSL", "preferSSL", "requireSSL", "allowTLS", "preferTLS", "requireTLS"]
+              exposedExternally:
+                type: boolean
+            required:
+            - credentials
+            - project
+            - version
+            - type
+            - members
+      - properties:
+          spec:
+            properties: # ShardedCluster schema
+              configServerCount:
+                maximum: 50
+                minimum: 1
+                type: integer
+              mongodsPerShardCount:
+                maximum: 50
+                minimum: 1
+                type: integer
+              mongosCount:
+                minimum: 1
+                type: integer
+              shardCount:
+                minimum: 1
+                type: integer
+              credentials:
+                type: string
+              project:
+                type: string
+              version:
+                type: string
+                pattern: "^[0-9]+.[0-9]+.[0-9]+(-.+)?$"
+              logLevel:
+                type: string
+                enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+              type:
+                type: string
+                pattern: "^ShardedCluster$"
+              security:
+                type: object
+                properties:
+                  tls:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                      ca:
+                        type: string
+                  clusterAuthenticationMode:
+                    type: string
+                    enum: ["x509"]
+              additionalMongodConfig:
+                properties:
+                  net:
+                    properties:
+                      ssl:
+                        properties:
+                          mode:
+                            type: string
+                            enum: ["disabled", "allowSSL", "preferSSL", "requireSSL", "allowTLS", "preferTLS", "requireTLS"]
+              exposedExternally:
+                type: boolean
+            required:
+            - credentials
+            - project
+            - version
+            - type
+            - shardCount
+            - mongodsPerShardCount
+            - mongosCount
+            - configServerCount
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: mongodbusers.mongodb.com
+spec:
+  group: mongodb.com
+  version: v1
+  scope: Namespaced
+  names:
+    kind: MongoDBUser
+    plural: mongodbusers
+    shortNames:
+    - mdbu
+    singular: mongodbuser
+  validation:
+      openAPIV3Schema:
+        properties:
+          spec:
+            properties:
+              username:
+                type: string
+                description: "The username of the user"
+              db:
+                type: string
+                enum: ["$external"]
+                description: "The database the user is stored in"
+              project:
+                type: string
+                description: "The project the user belongs to"
+              roles:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "The name of the role"
+                    db:
+                      type: string
+                      description: "The db the role can act on"
+                  required:
+                    - name
+                    - db
+            required:
+              - username
+              - db
+              - project
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: opsmanagers.mongodb.com
+spec:
+  group: mongodb.com
+  version: v1
+  scope: Namespaced
+  names:
+    kind: MongoDBOpsManager
+    plural: opsmanagers
+    shortNames:
+    - om
+    singular: opsmanager
+  additionalPrinterColumns:
+    - name: Version
+      type: string
+      description: The version of MongoDBOpsManager.
+      JSONPath: .spec.version
+    - name: Version (DB)
+      type: string
+      description: The version of Application Database  .
+      JSONPath: .spec.applicationDatabase.version
+    - name: State
+      type: string
+      description: The current state of the MongoDBOpsManager.
+      JSONPath: .status.opsManager.phase
+    - name: State (DB)
+      type: string
+      description: The current state of the MongoDBOpsManager Application Database.
+      JSONPath: .status.applicationDatabase.phase
+    - name: Age
+      type: date
+      description: The time since the MongoDBOpsManager resource was created.
+      JSONPath: .metadata.creationTimestamp
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            version:
+              type: string
+            applicationDatabase:
+              type: object
+              properties:
+                members:
+                  maximum: 50
+                  minimum: 3
+                  type: integer
+                version:
+                  type: string
+                  pattern: "^[0-9]+.[0-9]+.[0-9]+(-.+)?$"
+                logLevel:
+                  type: string
+                  enum: ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+                type:
+                  type: string
+                  enum: ["ReplicaSet"]
+                exposedExternally:
+                  type: boolean
+              required:
+                - version
+                - type
+                - members
+          required:
+            - version
+            - applicationDatabase
+
+

@@ -8,4 +8,4 @@ COPY simple-operator.py /simple-operator.py
 COPY pkg /pkg
 COPY crds /crds
 COPY templates /templates
-CMD kopf run --standalone --namespace mongodb /simple-operator.py
+CMD kopf run --standalone --namespace ${NAMESPACE} /simple-operator.py

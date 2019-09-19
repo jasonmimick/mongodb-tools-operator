@@ -23,7 +23,8 @@ metadata:
     mongodbTool: mongodb-charts-{{ name }}
 type: Opaque
 stringData:
-    mongodb-uri: "mongodb+srv://mongodb-charts-{{ name }}-metadb/?ssl=false" 
+    mongodb-uri: "mongodb://mongodb-charts-mongodb-charts-metadb-0.mongodb-charts-mongodb-charts-metadb-svc.chartstest.svc.cluster.local/?"
+    xmongodb-uri: "mongodb+srv://mongodb-charts-{{ name }}-metadb-svc/?ssl=false" 
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment

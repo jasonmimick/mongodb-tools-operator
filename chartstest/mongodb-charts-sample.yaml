@@ -15,7 +15,7 @@ metadata:
   name: mongodb-charts
 spec:
   useradmin: mongodb-charts-admin
-  version: "19.09"
+  version: 19.09
   
 
 

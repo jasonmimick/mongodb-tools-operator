@@ -2,7 +2,6 @@ kind:  Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: mongodb-tools-operator
-  namespace: mongodb
 rules:
   - apiGroups: [zalando.org]
     resources: [kopfpeerings]
@@ -74,7 +73,6 @@ kind:  RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: mongodb-tools-operator
-  namespace: mongodb
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind:  Role 
@@ -82,13 +80,11 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: mongodb-tools-operator
-  namespace: mongodb
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mongodb-tools-operator
-  namespace: mongodb
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -108,3 +104,8 @@ spec:
       containers:
       - name: mongodb-tools-operator
         image: jmimick/mongodb-tools-operator
+        env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
