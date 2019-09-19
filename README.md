@@ -1,5 +1,5 @@
-The MongoDB Tools Kubernetes Operator
----
+The MongoDB Tools Operator
+===
 
 Manage MongoDB Tools in your Kubernete clusters.
 Built for the MongoDB Engineering Offsite Hackathon 2019.
