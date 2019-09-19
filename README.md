@@ -50,6 +50,19 @@ Create a similar file and apply it to your cluster.
 ```bash
 kubectl apply -f my-mongodb-charts.yaml
 ```
+For testing you can to your new charts instance using `kubectl`
+
+bash
+```
+kubectl port-forward pod/mongodb-charts-76bb5854c8-gmgz6 8080:80
+```
+
+Be sure to use the name of *your* mongodb-charts-X pod. Then you can
+browse to [http://localhost:8080](http://localhost:8080) to connect.
+
+Connecting applications to MongoDB Charts
+
+TODO
 
 # Contributing
 
