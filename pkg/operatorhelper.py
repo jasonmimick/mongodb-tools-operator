@@ -18,11 +18,11 @@ class OperatorHelper:
     print(f'OperatorHelper test: {msg}')
 
   @staticmethod
-  def load_template(tool_id):
+  def load_chart(tool_id):
     # Load all templates in repo
-    template_instance = { 'template' : 'raw template data',
+    chart_instance = { 'template' : 'raw template data',
                           'rendered_template' : 'merged' }
-    template_dir = "templates"
+    chart_dir = "templates"
     template_file = f'{template_dir}/{tool_id}.template.yaml'
     logger.debug(f'load_template template_file={template_dir}')
     with open(template_file, 'r') as t:
@@ -33,7 +33,7 @@ class OperatorHelper:
 
     return template_instance
 
-  @staticmethod
+  @staticmethod:
   def render_template(template_instance, spec, body):
     # merge params
     parameters = { **spec, **body }

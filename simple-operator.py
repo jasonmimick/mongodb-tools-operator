@@ -1,6 +1,7 @@
 import kopf
 import logging
 import sys
+import subprocess
 from pkg.kube_apply import fromYaml 
 from jinja2 import Template
 from pkg.kubehelper import KubeHelper
@@ -20,10 +21,18 @@ print(welcome)
 
 OperatorHelper.test('hi')
 
+def apply_yaml( yaml ):
+  MyOut = subprocess.Popen(['ls', '-l', '.'], 
+              stdout=subprocess.PIPE, 
+              stderr=subprocess.STDOUT)
+  stdout,stderr = MyOut.communicate()
+  print(stdout)
+  print(stderr)
+
 @kopf.on.create('mongodb.com', 'v1alpha1', 'mongodbcharts')
 def create_fn(spec, **kwargs):
     logger.info(f'keys:{kwargs.keys()}')
-    template = OperatorHelper.load_template('mongodbcharts') 
+    template = OperatorHelper.load_chart('mongodbcharts') 
     template_instance = template['mongodbcharts']['template']
     #logger.info(f"kwargs:{kwargs['body']}")
     body = kwargs['body']

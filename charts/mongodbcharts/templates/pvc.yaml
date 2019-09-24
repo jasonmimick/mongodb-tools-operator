@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-charts-{{ .Release.Name }}-pvc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    deploy: mongodb-charts-{{ .Release.Name }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

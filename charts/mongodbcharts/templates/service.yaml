@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-charts-{{ .Release.Name }}-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    deploy: mongodb-charts-{{ .Release.Name }}
+spec:
+  selector:
+    mongodbTool: mongodb-charts-{{ .Release.Name }}
+  ports:
+  - name: http
+    targetPort: 80
+    port: 80
+  - name: https
+    targetPort: 443
+    port: 443

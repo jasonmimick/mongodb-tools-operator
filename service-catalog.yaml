@@ -1,0 +1,317 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"extensions/v1beta1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"service-catalog-apiserver"},"name":"apiserver","namespace":"service-catalog"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"service-catalog-apiserver"}},"template":{"metadata":{"labels":{"app":"service-catalog-apiserver"}},"spec":{"containers":[{"args":["apiserver","--admission-control","KubernetesNamespaceLifecycle","--secure-port","8443","--storage-type","etcd","--etcd-servers","http://etcd-cluster-client:2379","-v","6"],"image":"gcr.io/gcp-services/service-catalog:v0.1.11-gke.0","imagePullPolicy":"IfNotPresent","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/healthz","port":8443,"scheme":"HTTPS"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"name":"apiserver","ports":[{"containerPort":8443}],"readinessProbe":{"failureThreshold":1,"httpGet":{"path":"/healthz","port":8443,"scheme":"HTTPS"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"resources":{"limits":{"cpu":"100m","memory":"30Mi"},"requests":{"cpu":"100m","memory":"20Mi"}},"volumeMounts":[{"mountPath":"/var/run/kubernetes-service-catalog","name":"apiserver-cert","readOnly":true}]}],"serviceAccountName":"apiserver","volumes":[{"name":"apiserver-cert","secret":{"items":[{"key":"tls.crt","path":"apiserver.crt"},{"key":"tls.key","path":"apiserver.key"}],"secretName":"apiserver-cert"}}]}}}}
+    creationTimestamp: "2019-09-23T19:34:24Z"
+    generation: 1
+    labels:
+      app: service-catalog-apiserver
+    name: apiserver
+    namespace: service-catalog
+    resourceVersion: "261899"
+    selfLink: /apis/extensions/v1beta1/namespaces/service-catalog/deployments/apiserver
+    uid: 265d33d6-de39-11e9-b2dd-e86a64b11862
+  spec:
+    progressDeadlineSeconds: 2147483647
+    replicas: 1
+    revisionHistoryLimit: 2147483647
+    selector:
+      matchLabels:
+        app: service-catalog-apiserver
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: service-catalog-apiserver
+      spec:
+        containers:
+        - args:
+          - apiserver
+          - --admission-control
+          - KubernetesNamespaceLifecycle
+          - --secure-port
+          - "8443"
+          - --storage-type
+          - etcd
+          - --etcd-servers
+          - http://etcd-cluster-client:2379
+          - -v
+          - "6"
+          image: gcr.io/gcp-services/service-catalog:v0.1.11-gke.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: apiserver
+          ports:
+          - containerPort: 8443
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 8443
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 100m
+              memory: 30Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/run/kubernetes-service-catalog
+            name: apiserver-cert
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: apiserver
+        serviceAccountName: apiserver
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: apiserver-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.crt
+              path: apiserver.crt
+            - key: tls.key
+              path: apiserver.key
+            secretName: apiserver-cert
+  status:
+    conditions:
+    - lastTransitionTime: "2019-09-23T19:34:24Z"
+      lastUpdateTime: "2019-09-23T19:34:24Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    replicas: 1
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"extensions/v1beta1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"service-catalog-controller-manager"},"name":"controller-manager","namespace":"service-catalog"},"spec":{"replicas":1,"selector":{"matchLabels":{"app":"service-catalog-controller-manager"}},"template":{"metadata":{"labels":{"app":"service-catalog-controller-manager"}},"spec":{"containers":[{"args":["controller-manager","--secure-port","8444","--leader-elect=false","-v","10","--resync-interval","5m","--broker-relist-interval","24h","--feature-gates","OriginatingIdentity=true","--feature-gates","AsyncBindingOperations=true"],"env":[{"name":"K8S_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}}],"image":"gcr.io/gcp-services/service-catalog:v0.1.11-gke.0","imagePullPolicy":"IfNotPresent","livenessProbe":{"failureThreshold":3,"httpGet":{"path":"/healthz","port":8444,"scheme":"HTTPS"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"name":"controller-manager","ports":[{"containerPort":8444}],"readinessProbe":{"failureThreshold":1,"httpGet":{"path":"/healthz","port":8444,"scheme":"HTTPS"},"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":2},"resources":{"limits":{"cpu":"100m","memory":"50Mi"},"requests":{"cpu":"100m","memory":"20Mi"}},"volumeMounts":[{"mountPath":"/var/run/kubernetes-service-catalog","name":"service-catalog-cert","readOnly":true}]}],"serviceAccountName":"controller-manager","volumes":[{"name":"service-catalog-cert","secret":{"items":[{"key":"tls.crt","path":"apiserver.crt"},{"key":"tls.key","path":"apiserver.key"}],"secretName":"apiserver-cert"}}]}}}}
+    creationTimestamp: "2019-09-23T19:34:25Z"
+    generation: 1
+    labels:
+      app: service-catalog-controller-manager
+    name: controller-manager
+    namespace: service-catalog
+    resourceVersion: "261900"
+    selfLink: /apis/extensions/v1beta1/namespaces/service-catalog/deployments/controller-manager
+    uid: 267aa701-de39-11e9-b2dd-e86a64b11862
+  spec:
+    progressDeadlineSeconds: 2147483647
+    replicas: 1
+    revisionHistoryLimit: 2147483647
+    selector:
+      matchLabels:
+        app: service-catalog-controller-manager
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: service-catalog-controller-manager
+      spec:
+        containers:
+        - args:
+          - controller-manager
+          - --secure-port
+          - "8444"
+          - --leader-elect=false
+          - -v
+          - "10"
+          - --resync-interval
+          - 5m
+          - --broker-relist-interval
+          - 24h
+          - --feature-gates
+          - OriginatingIdentity=true
+          - --feature-gates
+          - AsyncBindingOperations=true
+          env:
+          - name: K8S_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: gcr.io/gcp-services/service-catalog:v0.1.11-gke.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8444
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          name: controller-manager
+          ports:
+          - containerPort: 8444
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /healthz
+              port: 8444
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 100m
+              memory: 50Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/run/kubernetes-service-catalog
+            name: service-catalog-cert
+            readOnly: true
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: controller-manager
+        serviceAccountName: controller-manager
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: service-catalog-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.crt
+              path: apiserver.crt
+            - key: tls.key
+              path: apiserver.key
+            secretName: apiserver-cert
+  status:
+    conditions:
+    - lastTransitionTime: "2019-09-23T19:34:25Z"
+      lastUpdateTime: "2019-09-23T19:34:25Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    replicas: 1
+    unavailableReplicas: 1
+    updatedReplicas: 1
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "1"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"extensions/v1beta1","kind":"Deployment","metadata":{"annotations":{},"name":"etcd-operator","namespace":"service-catalog"},"spec":{"replicas":1,"template":{"metadata":{"labels":{"name":"etcd-operator"}},"spec":{"containers":[{"env":[{"name":"MY_POD_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}},{"name":"MY_POD_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.name"}}}],"image":"quay.io/coreos/etcd-operator:v0.6.1","name":"etcd-operator"}],"serviceAccountName":"etcd-operator"}}}}
+    creationTimestamp: "2019-09-23T19:34:23Z"
+    generation: 1
+    labels:
+      name: etcd-operator
+    name: etcd-operator
+    namespace: service-catalog
+    resourceVersion: "265046"
+    selfLink: /apis/extensions/v1beta1/namespaces/service-catalog/deployments/etcd-operator
+    uid: 259f7274-de39-11e9-b2dd-e86a64b11862
+  spec:
+    progressDeadlineSeconds: 2147483647
+    replicas: 1
+    revisionHistoryLimit: 2147483647
+    selector:
+      matchLabels:
+        name: etcd-operator
+    strategy:
+      rollingUpdate:
+        maxSurge: 1
+        maxUnavailable: 1
+      type: RollingUpdate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          name: etcd-operator
+      spec:
+        containers:
+        - env:
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          image: quay.io/coreos/etcd-operator:v0.6.1
+          imagePullPolicy: IfNotPresent
+          name: etcd-operator
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: etcd-operator
+        serviceAccountName: etcd-operator
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2019-09-23T19:34:23Z"
+      lastUpdateTime: "2019-09-23T19:34:23Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    observedGeneration: 1
+    readyReplicas: 1
+    replicas: 1
+    updatedReplicas: 1
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

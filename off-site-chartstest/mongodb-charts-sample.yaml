@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-charts-admin
+type: Opaque
+stringData:
+  findName: admin
+  lastName: charts
+  email: admin@example.com
+  password: password
+---
+apiVersion: mongodb.com/v1alpha1
+kind: MongoDBCharts
+metadata:
+  name: mongodb-charts
+spec:
+  useradmin: mongodb-charts-admin
+  version: 19.09
+  
+
+
+
+
+

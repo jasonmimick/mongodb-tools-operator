@@ -1,0 +1,14 @@
+---
+apiVersion: mongodb.com/v1
+kind: MongoDB
+metadata:
+  name: mongodb-charts-{{ .Release.Name }}-metadb
+  labels:
+    mongodbTool: mongodb-charts-{{ .Release.Name }}
+spec:
+  type: Standalone
+  version: 4.2.0
+  project: {{ .Values.project }} 
+  credentials: {{ .Values.credentials }}
+  persistent: true
+

@@ -1,0 +1,39 @@
+# Default values for mongodbcharts.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#
+# The MongoDB Charts container image version
+#
+version: 19.09
+
+#
+# The name of a secret holding account information
+# for a user admin for this MongoDB Charts' 
+# deployment.
+# The secret should conform to this example:
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: mongodb-charts-admin
+#type: Opaque
+#stringData:
+#  findName: admin
+#  lastName: charts
+#  email: admin@example.com
+#  password: password
+#
+useradmin: mongodb-charts-admin
+
+#
+# Name of the ConfigMap holding the MongoDB
+# Ops Manager Project in which to host the 
+# metadb for this MongoDB Charts deployment.
+#
+project: configmap-opsmanager-charts
+
+#
+# Name of the Secret used for connection
+# to MongoDB Ops Manager.
+#
+credentials: secret-opsmanager-credentials

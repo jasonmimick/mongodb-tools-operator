@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}' 
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      deploy: mongodb-charts-{{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        deploy: mongodb-charts-{{ .Release.Name }}
+    spec:
+      containers:
+        - name: mongodb-charts-{{ .Release.Name }}
+          image: quay.io/mongodb/charts:{{ .Values.version }}
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+            - containerPort: 8080
+          env:
+            - name: CHARTS_MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-charts-{{ .Release.Name }}-metadb-secret
+                  key: mongodb-uri
+          volumeMounts:
+            - mountPath: "/mongodb-charts/volumes/keys"
+              name: keys
+            - mountPath: "/mongodb-charts/volumes/logs"
+              name: logs
+            - mountPath: "/mongodb-charts/volumes/db-certs"
+              name: db-certs
+            - mountPath: "/mongodb-charts/volumes/web-certs"
+              name: web-certs
+      volumes:
+        - name: keys
+          persistentVolumeClaim:
+            claimName: mongodb-charts-{{ .Release.Name }}-pvc
+        - name: logs
+        - name: db-certs
+        - name: web-certs
